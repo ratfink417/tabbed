@@ -1,48 +1,52 @@
-/*
- * Copy me if you can.
- * by 20h
- */
+/* See the LICENSE file for copyright and license details. */
 
-#ifndef ARG_H__
-#define ARG_H__
+#ifndef __ARG_H__
+#define __ARG_H__
 
 extern char *argv0;
 
+#define USED(x)		((void)(x))
+
 /* use main(int argc, char *argv[]) */
 #define ARGBEGIN	for (argv0 = *argv, argv++, argc--;\
-					argv[0] && argv[0][0] == '-'\
-					&& argv[0][1];\
+					argv[0] && argv[0][1]\
+					&& argv[0][0] == '-';\
 					argc--, argv++) {\
-				char argc_;\
-				char **argv_;\
-				int brk_;\
+				char _argc;\
+				char **_argv;\
+				int brk;\
 				if (argv[0][1] == '-' && argv[0][2] == '\0') {\
 					argv++;\
 					argc--;\
 					break;\
 				}\
-				for (brk_ = 0, argv[0]++, argv_ = argv;\
-						argv[0][0] && !brk_;\
+				for (brk = 0, argv[0]++, _argv = argv;\
+						argv[0][0] && !brk;\
 						argv[0]++) {\
-					if (argv_ != argv)\
+					if (_argv != argv)\
 						break;\
-					argc_ = argv[0][0];\
-					switch (argc_)
-#define ARGEND			}\
-			}
+					_argc = argv[0][0];\
+					switch (_argc)
 
-#define ARGC()		argc_
+#define ARGEND			}\
+				USED(_argc);\
+			}\
+			USED(argv);\
+			USED(argc);
+
+#define ARGC()		_argc
 
 #define EARGF(x)	((argv[0][1] == '\0' && argv[1] == NULL)?\
 				((x), abort(), (char *)0) :\
-				(brk_ = 1, (argv[0][1] != '\0')?\
+				(brk = 1, (argv[0][1] != '\0')?\
 					(&argv[0][1]) :\
 					(argc--, argv++, argv[0])))
 
 #define ARGF()		((argv[0][1] == '\0' && argv[1] == NULL)?\
 				(char *)0 :\
-				(brk_ = 1, (argv[0][1] != '\0')?\
+				(brk = 1, (argv[0][1] != '\0')?\
 					(&argv[0][1]) :\
 					(argc--, argv++, argv[0])))
 
 #endif
+
